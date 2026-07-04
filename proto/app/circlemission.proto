@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package app.circlemission;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.circlemission";
+option java_outer_classname = "CircleMissionServiceProto";
+
+import "app/common.proto";
+import "google/protobuf/empty.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_circlemission_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service CircleMissionService {
+  rpc Fetch(google.protobuf.Empty) returns (FetchCircleMissionResponse);
+  rpc Receive(ReceiveRequest) returns (google.protobuf.Empty);
+}
+
+message FetchCircleMissionResponse {
+  repeated app.common.CircleMissionProgress normal_missions = 1;
+  repeated app.common.CircleMissionProgress daily_missions = 2;
+}
+
+message ReceiveRequest {
+  repeated int64 mission_ids = 1;
+}

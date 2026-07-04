@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package app.circle;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.circle";
+option java_outer_classname = "CircleServiceProto";
+
+import "app/common.proto";
+import "google/protobuf/empty.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_circle_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+//
+// FLAG: ChangeAuthRequest carries only `player_id` (field 1) on the wire -- the
+// four auth-change RPCs (TransferMaster/TransferSubmaster/Set/UnsetSubmaster) all
+// reuse it; the target role is encoded by which RPC is called, not a request field.
+
+service CircleService {
+  rpc CreateCircle(SaveCircleRequest) returns (CreateCircleResponse);
+  rpc GetCircle(GetCircleSettingRequest) returns (GetCircleSettingResponse);
+  rpc EditCircle(SaveCircleRequest) returns (EditCircleResponse);
+  rpc Search(SearchRequest) returns (SearchResponse);
+  rpc GetRecommendedCircleList(GetRecommendedCircleListRequest) returns (GetRecommendedCircleListResponse);
+  rpc GetCircleDetail(GetCircleRequest) returns (GetCircleResponse);
+  rpc TransferMaster(ChangeAuthRequest) returns (ChangeAuthResponse);
+  rpc TransferSubmaster(ChangeAuthRequest) returns (ChangeAuthResponse);
+  rpc SetSubmaster(ChangeAuthRequest) returns (ChangeAuthResponse);
+  rpc UnsetSubmaster(ChangeAuthRequest) returns (ChangeAuthResponse);
+  rpc RemovePlayer(RemovePlayerRequest) returns (RemovePlayerResponse);
+  rpc ExitCircle(ExitCircleRequest) returns (ExitCircleResponse);
+  rpc DeleteCircle(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc UpdateCircleTop(google.protobuf.Empty) returns (UpdateCircleTopResponse);
+}
+
+message SaveCircleRequest {
+  app.common.SaveCircleParams params = 1;
+}
+
+message CreateCircleResponse {
+  uint64 circle_id = 1;
+}
+
+message EditCircleResponse {
+  // (no fields in dump)
+}
+
+message GetCircleSettingRequest {
+  // (no fields in dump)
+}
+
+message GetCircleSettingResponse {
+  app.common.Circle circle = 1;
+  app.common.CirclePlayer circle_player = 2;
+  int32 circle_mission_reward_count = 3;
+}
+
+message SearchRequest {
+  app.common.SearchOptions options = 1;
+}
+
+message SearchResponse {
+  repeated app.common.CircleWithMasterPlayer circles = 1;
+}
+
+message GetRecommendedCircleListRequest {
+  // (no fields in dump)
+}
+
+message GetRecommendedCircleListResponse {
+  repeated app.common.CircleWithMasterPlayer circles = 1;
+}
+
+message GetCircleRequest {
+  uint64 circle_id = 1;
+}
+
+message GetCircleResponse {
+  app.common.CircleDetailWithPlayerList circle = 1;
+}
+
+message ChangeAuthRequest {
+  string player_id = 1;
+}
+
+message ChangeAuthResponse {
+  // (no fields in dump)
+}
+
+message RemovePlayerRequest {
+  string player_id = 1;
+}
+
+message RemovePlayerResponse {
+  // (no fields in dump)
+}
+
+message ExitCircleRequest {
+  // (no fields in dump)
+}
+
+message ExitCircleResponse {
+  // (no fields in dump)
+}
+
+message UpdateCircleTopResponse {
+  app.common.UpdateCircleTop circle_top = 1;
+}

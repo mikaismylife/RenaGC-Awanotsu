@@ -1,0 +1,166 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+group = 'io.renagc'
+version = '0.1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+application {
+    mainClass = 'io.renagc.awanotsu.RenaGC'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    grpcVersion     = '1.66.0'
+    protobufVersion = '3.25.3'
+}
+
+dependencies {
+    // --- gRPC (Netty-shaded so we ship our own transport) ---
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    // Server reflection so grpcurl works without local .proto files.
+    implementation "io.grpc:grpc-services:${grpcVersion}"
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+
+    // Required for grpc-java generated stubs (@javax.annotation.Generated).
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+
+    // --- console / scanning / config ---
+    implementation 'org.jline:jline:3.25.1'
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+    // --- logging ---
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'ch.qos.logback:logback-classic:1.5.6'
+
+    // --- persistence (soft-fail at runtime if Mongo is absent) ---
+    implementation 'org.mongodb:mongodb-driver-sync:4.11.1'
+    implementation 'dev.morphia.morphia:morphia-core:2.4.13'
+
+    // --- crypto: master-data is Rijndael-256 (256-bit block) CBC/PKCS7, which the
+    //     JCE cannot do (AES is fixed at a 128-bit block). BouncyCastle's
+    //     RijndaelEngine supports a 256-bit block, matching the client's
+    //     Fwk.UnityCipher.RijndaelEncryption (.NET RijndaelManaged BlockSize=256). ---
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
+    // bcpkix: build the self-signed X.509 cert (SANs) for TLS gRPC + HTTPS endpoints.
+    implementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto {
+            srcDir 'proto'
+        }
+    }
+}
+
+// Make the console REPL (future Phase 2) able to read stdin.
+tasks.named('run') {
+    standardInput = System.in
+}
+
+// Smoke-test client: calls Version / Register / Whoami against a running server.
+// Usage:  gradlew smokeTest            (localhost:20000)
+//         gradlew smokeTest --args="localhost 20000"
+tasks.register('smokeTest', JavaExec) {
+    group = 'verification'
+    description = 'Run the gRPC smoke-test client against a running RenaGC server.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.client.SmokeClient'
+}
+
+// Flow test: walks the main app sequence Version -> Register -> GetPlayerData
+// -> GetHome -> StartFree -> FinishFree -> GetRanking against a running server,
+// asserting each step returns valid non-empty data (login -> home -> play -> result).
+// Usage:  gradlew flowTest            (localhost:20000)
+//         gradlew flowTest --args="localhost 20000"
+tasks.register('flowTest', JavaExec) {
+    group = 'verification'
+    description = 'Walk login -> home -> play -> result against a running RenaGC server.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.client.FlowClient'
+}
+
+// Throwaway: dump the full GetPlayerData response from a running server.
+tasks.register('dumpData', JavaExec) {
+    group = 'verification'
+    description = 'Register a fresh player and print its full GetPlayerData response.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.client.DumpClient'
+}
+
+// Masterdata smoke-test: no running server needed. Loads configured master
+// version + an encrypted table from the configured master dir, re-implements the
+// client's Rijndael-256 / gunzip / JSON decrypt, and asserts non-empty, correctly
+// shaped, round-trip-decryptable data.
+// Usage:  gradlew masterdataSmoke
+//         gradlew masterdataSmoke --args="<path-to-master-enc-dir>"
+tasks.register('masterdataSmoke', JavaExec) {
+    group = 'verification'
+    description = 'Verify the real master DB loads + decrypts (Rijndael-256/gzip/JSON).'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.client.MasterdataSmoke'
+}
+
+// GM Handbook generator: no running server needed. Loads the decrypted master tables
+// + scans the @Command console commands, and writes "GM Handbook/GM Handbook - <LANG>.txt"
+// (id -> name maps + the command list), Grasscutter-style.
+// Usage:  gradlew generateHandbook                 (EN)
+//         gradlew generateHandbook --args="EN"
+tasks.register('generateHandbook', JavaExec) {
+    group = 'documentation'
+    description = 'Generate "GM Handbook - <LANG>.txt" (commands + id->name maps) from the master DB.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.tools.HandbookGenerator'
+}
+
+// Dev: decrypt named master tables to plaintext JSON (for inspecting masterdata values).
+// Usage: gradlew dumpTables  (render-relevant default set) or --args="MasterX MasterY"
+tasks.register('dumpTables', JavaExec) {
+    group = 'documentation'
+    description = 'Decrypt named master tables to plaintext JSON for inspection.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.tools.DumpTable'
+}
+
+// TLS smoke-test: no external server/ports. Boots an in-process TLS gRPC server with a
+// freshly generated self-signed cert, connects a client that trusts that cert,
+// negotiates ALPN h2, calls masterdata.Version, and asserts the handshake + SAN match.
+tasks.register('tlsSmoke', JavaExec) {
+    group = 'verification'
+    description = 'Verify TLS gRPC (self-signed, ALPN h2, SAN match) handshakes end-to-end.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.renagc.awanotsu.client.TlsSmoke'
+}

@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package app.circleinvitation;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.circleinvitation";
+option java_outer_classname = "CircleInvitationServiceProto";
+
+import "app/common.proto";
+import "google/protobuf/empty.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_circleinvitation_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service CircleInvitationService {
+  rpc InviteCircle(InviteCircleRequest) returns (google.protobuf.Empty);
+  rpc RevokeCircleInvitation(RevokeCircleInvitationRequest) returns (google.protobuf.Empty);
+  rpc GetInvitationList(GetInvitationListRequest) returns (GetInvitationListResponse);
+  rpc GetCircleInvitationRecommendList(google.protobuf.Empty) returns (GetCircleInvitationRecommendListResponse);
+  rpc GetInvitablePlayer(GetInvitablePlayerRequest) returns (GetInvitablePlayerResponse);
+  rpc GetInvitingPlayer(google.protobuf.Empty) returns (GetInvitingPlayerResponse);
+}
+
+message InviteCircleRequest {
+  string player_id = 1;
+}
+
+message RevokeCircleInvitationRequest {
+  string player_id = 1;
+}
+
+message GetInvitationListRequest {
+  // (no fields in dump)
+}
+
+message GetInvitationListResponse {
+  repeated app.common.CircleInvitation invitations = 1;
+}
+
+message GetCircleInvitationRecommendListResponse {
+  repeated app.common.PlayerSimpleProfile player_basic_profiles = 1;
+}
+
+message GetInvitablePlayerRequest {
+  string player_id = 1;
+}
+
+message GetInvitablePlayerResponse {
+  app.common.PlayerSimpleProfile player_basic_profile = 1;
+}
+
+message GetInvitingPlayerResponse {
+  repeated app.common.PlayerSimpleProfile player_basic_profiles = 1;
+}

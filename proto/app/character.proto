@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.character;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.character";
+option java_outer_classname = "CharacterServiceProto";
+
+import "app/common.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_character_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service CharacterService {
+  rpc GainFriendshipRankReward(GainFriendshipRankRewardRequest) returns (GainFriendshipRankRewardResponse);
+}
+
+message GainFriendshipRankRewardRequest {
+  repeated app.common.CharacterFriendshipRankReward rewards = 1;
+}
+
+message GainFriendshipRankRewardResponse {
+  app.common.Notification notification = 1;
+}

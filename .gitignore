@@ -1,0 +1,16 @@
+build/
+.gradle/
+*.class
+bin/
+.idea/
+__pycache__/
+*.pyc
+*.bin
+/GM Handbook/
+*.log
+config.json
+certs/
+*.p12
+resources/
+_tmp/
+/tools/

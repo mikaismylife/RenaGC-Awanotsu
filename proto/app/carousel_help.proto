@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package app.carousel_help;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.carouselhelp";
+option java_outer_classname = "CarouselHelpServiceProto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_carousel_help_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service CarouselHelpService {
+  rpc Shown(ShownRequest) returns (ShownResponse);
+}
+
+message ShownRequest {
+  repeated int64 master_ids = 1;
+}
+
+message ShownResponse {
+  // (no fields in dump)
+}

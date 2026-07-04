@@ -1,0 +1,39 @@
+{
+    "grpc": {
+        "host": "0.0.0.0",
+        "port": 20000
+    },
+    "mongo": "mongodb://localhost:27017/renagc",
+    "masterVersion": "0.0.0-renagc",
+    "masterdata": {
+        "dir": "resources/masterdata",
+        "overrideDir": "resources/masterdata-overrides",
+        "serveHttp": true,
+        "httpPort": 5080,
+        "httpsPort": 8443,
+        "keyHex": ""
+    },
+    "asset": {
+        "serveHttp": true,
+        "httpPort": 5081,
+        "httpsPort": 8444,
+        "dir": "resources/asset",
+        "embeddedDir": ""
+    },
+    "tls": {
+        "enabled": false,
+        "grpcPort": 443,
+        "p12Path": "certs/renagc-tls.p12",
+        "password": "change-me",
+        "sans": [
+            "localhost",
+            "127.0.0.1"
+        ]
+    },
+    "console": {
+        "remoteEnabled": false,
+        "remotePort": 5090,
+        "remoteHost": "127.0.0.1",
+        "remoteToken": "change-me"
+    }
+}

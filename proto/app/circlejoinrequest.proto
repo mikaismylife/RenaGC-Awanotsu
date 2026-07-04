@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package app.circlejoinrequest;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.circlejoinrequest";
+option java_outer_classname = "CircleJoinRequestServiceProto";
+
+import "app/common.proto";
+import "google/protobuf/empty.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_circlejoinrequest_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service CircleJoinRequestService {
+  rpc CircleJoinReq(CircleJoinReqRequest) returns (CircleJoinReqResponse);
+  rpc CircleJoinApprove(CircleJoinApproveRequest) returns (CircleJoinApproveResponse);
+  rpc CircleJoinRevoke(CircleJoinRevokeRequest) returns (CircleJoinRevokeResponse);
+  rpc GetCircleJoinRequestList(google.protobuf.Empty) returns (GetCircleJoinRequestListResponse);
+}
+
+message CircleJoinReqRequest {
+  uint64 circle_id = 1;
+}
+
+message CircleJoinReqResponse {
+  uint64 circle_id = 1;
+}
+
+message CircleJoinApproveRequest {
+  string player_id = 1;
+}
+
+message CircleJoinApproveResponse {
+  // (no fields in dump)
+}
+
+message CircleJoinRevokeRequest {
+  string player_id = 1;
+}
+
+message CircleJoinRevokeResponse {
+  // (no fields in dump)
+}
+
+message GetCircleJoinRequestListResponse {
+  repeated app.common.CircleJoinRequest circle_join_requests = 1;
+}

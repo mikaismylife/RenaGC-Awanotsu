@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package app.announcement;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.announcement";
+option java_outer_classname = "AnnouncementServiceProto";
+
+import "app/common.proto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_announcement_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service AnnouncementService {
+  rpc GetList(GetListRequest) returns (GetListResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+}
+
+message GetListRequest {
+  app.common.Tab selected_tab = 1;
+}
+
+message GetListResponse {
+  repeated app.common.Announcement announcements = 1;
+}
+
+message GetRequest {
+  int64 id = 1;
+}
+
+message GetResponse {
+  app.common.Announcement announcement = 1;
+}

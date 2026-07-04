@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package app.banditem;
+
+option java_multiple_files = true;
+option java_package = "io.renagc.awanotsu.proto.banditem";
+option java_outer_classname = "BandItemServiceProto";
+
+// Recovered from the il2cpp dump (NET-NEW: binary-only service, no prior proto).
+// RPC set authoritative from __Marshaller_app_banditem_* + __Method_* bindings;
+// message field bodies recovered from the Google.Protobuf C# classes.
+
+service BandItemService {
+  rpc LevelUp(LevelUpRequest) returns (LevelUpResponse);
+}
+
+message LevelUpRequest {
+  int64 band_item_master_id = 1;
+  int32 to_level = 2;
+}
+
+message LevelUpResponse {
+  // (no fields in dump)
+}
